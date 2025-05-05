@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Handcrafted Jewelry Inventory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #9c786c;
+      --secondary-color: #7d5a50;
+      --accent-color: #d4a59a;
+      --light-color: #f8f4f3;
+      --dark-color: #3a2e26;
+      --success-color: #6b8e23;
+      --danger-color: #b22222;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-color);
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 2.5rem;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #e9ecef;
+    }
+    
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #6c757d;
+      position: relative;
+      transition: var(--transition);
+    }
+    
+    .tab-btn.active {
+      color: var(--primary-color);
+    }
+    
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary-color);
+    }
+    
+    .tab-btn:hover:not(.active) {
+      color: var(--secondary-color);
+    }
+    
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Search Container */
+    .search-container {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .search-container input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      border: 1px solid #dee2e6;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .search-container input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(156, 120, 108, 0.2);
+    }
+    
+    .search-container::before {
+      content: '\f002';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #6c757d;
+    }
+    
+    /* Inventory Table */
+    .inventory-container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+    
+    #inventory-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    #inventory-table thead {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    #inventory-table th {
+      padding: 1rem;
+      text-align: left;
+      font-weight: 500;
+    }
+    
+    #inventory-table tbody tr {
+      border-bottom: 1px solid #e9ecef;
+      transition: var(--transition);
+    }
+    
+    #inventory-table tbody tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    #inventory-table td {
+      padding: 1rem;
+      vertical-align: middle;
+    }
+    
+    .action-btns {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .btn-edit {
+      background-color: #d4a59a;
+      color: var(--dark-color);
+    }
+    
+    .btn-edit:hover {
+      background-color: #c4958a;
+    }
+    
+    .btn-delete {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-delete:hover {
+      background-color: #9a1c1c;
+    }
+    
+    .btn-sold {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn-sold:hover {
+      background-color: #5a7a1b;
+    }
+    
+    /* Jewelry Form */
+    #jewelry-form {
+      background-color: white;
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--dark-color);
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(156, 120, 108, 0.2);
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    #save-btn {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      flex: 1;
+    }
+    
+    #save-btn:hover {
+      background-color: var(--secondary-color);
+    }
+    
+    #cancel-btn {
+      background-color: #6c757d;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      flex: 1;
+    }
+    
+    #cancel-btn:hover {
+      background-color: #5a6268;
+    }
+    
+    /* Status Badges */
+    .status-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+    
+    .status-available {
+      background-color: #e6f7e6;
+      color: var(--success-color);
+    }
+    
+    .status-sold {
+      background-color: #ffebeb;
+      color: var(--danger-color);
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background-color: var(--success-color);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      animation: slideIn 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .toast.error {
+      background-color: var(--danger-color);
+    }
+    
+    .toast.show {
+      display: flex;
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      #inventory-table thead {
+        display: none;
+      }
+      
+      #inventory-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e9ecef;
+        border-radius: var(--border-radius);
+      }
+      
+      #inventory-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem;
+        border-bottom: 1px solid #e9ecef;
+      }
+      
+      #inventory-table td:last-child {
+        border-bottom: none;
+      }
+      
+      #inventory-table td::before {
+        content: attr(data-label);
+        font-weight: 500;
+        margin-right: 1rem;
+      }
+      
+      .action-btns {
+        justify-content: flex-end;
+      }
+      
+      #jewelry-form {
+        padding: 1.5rem;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fas fa-gem"></i> Handcrafted Jewelry Inventory</h1>
+    
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="list">
+        <i class="fas fa-list"></i> Inventory List
+      </button>
+      <button class="tab-btn" data-tab="form">
+        <i class="fas fa-plus-circle"></i> Add/Edit Piece
+      </button>
+    </div>
+    
+    <div id="list-tab" class="tab-content active">
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search jewelry pieces...">
+      </div>
+      
+      <div class="inventory-container">
+        <table id="inventory-table">
+          <thead>
+            <tr>
+              <th>Piece Name</th>
+              <th>Type</th>
+              <th>Materials</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-list">
+            <!-- Jewelry pieces will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="form-tab" class="tab-content">
+      <form id="jewelry-form">
+        <input type="hidden" id="piece-id">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="piece-name"><i class="fas fa-gem"></i> Piece Name</label>
+            <input type="text" id="piece-name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="piece-type"><i class="fas fa-tag"></i> Type</label>
+            <select id="piece-type" required>
+              <option value="">Select type</option>
+              <option value="Necklace">Necklace</option>
+              <option value="Bracelet">Bracelet</option>
+              <option value="Earrings">Earrings</option>
+              <option value="Ring">Ring</option>
+              <option value="Anklet">Anklet</option>
+              <option value="Brooch">Brooch</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="materials"><i class="fas fa-atom"></i> Materials</label>
+            <input type="text" id="materials" placeholder="e.g., Silver, Turquoise, Pearl" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="price"><i class="fas fa-tag"></i> Price ($)</label>
+            <input type="number" id="price" min="0" step="0.01" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="creation-date"><i class="fas fa-calendar"></i> Creation Date</label>
+            <input type="date" id="creation-date" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="status"><i class="fas fa-info-circle"></i> Status</label>
+            <select id="status" required>
+              <option value="Available">Available</option>
+              <option value="Sold">Sold</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Commission">Commission</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="description"><i class="fas fa-align-left"></i> Description</label>
+          <textarea id="description" rows="3" placeholder="Describe the piece, its inspiration, and any special features"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="notes"><i class="fas fa-sticky-note"></i> Notes</label>
+          <textarea id="notes" rows="2" placeholder="Any additional notes about this piece"></textarea>
+        </div>
+        
+        <div class="button-group">
+          <button type="submit" id="save-btn"><i class="fas fa-save"></i> Save Piece</button>
+          <button type="button" id="cancel-btn"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <div id="toast" class="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toast-message">Piece saved successfully!</span>
+  </div>
+  
+  <script>
+    // Jewelry data storage
+    let jewelryPieces = [];
+    let currentPieceId = null;
+    
+    // DOM Elements
+    const jewelryForm = document.getElementById('jewelry-form');
+    const inventoryList = document.getElementById('inventory-list');
+    const searchInput = document.getElementById('search-input');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toast-message');
+    
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSamplePieces();
+      setupEventListeners();
+    });
+    
+    // Load sample jewelry pieces
+    function loadSamplePieces() {
+      jewelryPieces = [
+        {
+          id: 1,
+          name: 'Turquoise Dream Necklace',
+          type: 'Necklace',
+          materials: 'Sterling Silver, Turquoise',
+          price: 89.99,
+          creationDate: '2023-05-15',
+          status: 'Available',
+          description: 'Handcrafted necklace with genuine turquoise stones set in sterling silver.',
+          notes: 'Very popular at the last craft fair'
+        },
+        {
+          id: 2,
+          name: 'Pearl Cluster Earrings',
+          type: 'Earrings',
+          materials: 'Freshwater Pearls, Gold-filled wire',
+          price: 65.50,
+          creationDate: '2023-06-02',
+          status: 'Sold',
+          description: 'Elegant pearl cluster earrings with gold-filled components.',
+          notes: 'Sold to Mrs. Johnson on June 10th'
+        },
+        {
+          id: 3,
+          name: 'Wire Wrapped Ring',
+          type: 'Ring',
+          materials: 'Copper wire, Amethyst',
+          price: 42.00,
+          creationDate: '2023-06-18',
+          status: 'Available',
+          description: 'Artistic wire wrapped ring featuring a small amethyst stone.',
+          notes: 'Part of the Bohemian collection'
+        }
+      ];
+      renderInventory();
+    }
+    
+    // Set up event listeners
+    function setupEventListeners() {
+      // Tab switching
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          btn.classList.add('active');
+          const tabId = btn.getAttribute('data-tab');
+          document.getElementById(`${tabId}-tab`).classList.add('active');
+        });
+      });
+      
+      // Form submission
+      jewelryForm.addEventListener('submit', handleFormSubmit);
+      
+      // Cancel button
+      document.getElementById('cancel-btn').addEventListener('click', () => {
+        document.querySelector('[data-tab="list"]').click();
+        jewelryForm.reset();
+        currentPieceId = null;
+      });
+      
+      // Search functionality
+      searchInput.addEventListener('input', () => {
+        renderInventory();
+      });
+    }
+    
+    // Handle form submission
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const piece = {
+        id: currentPieceId || Date.now(),
+        name: document.getElementById('piece-name').value,
+        type: document.getElementById('piece-type').value,
+        materials: document.getElementById('materials').value,
+        price: parseFloat(document.getElementById('price').value),
+        creationDate: document.getElementById('creation-date').value,
+        status: document.getElementById('status').value,
+        description: document.getElementById('description').value,
+        notes: document.getElementById('notes').value
+      };
+      
+      if (currentPieceId) {
+        // Update existing piece
+        const index = jewelryPieces.findIndex(p => p.id === currentPieceId);
+        if (index !== -1) {
+          jewelryPieces[index] = piece;
+          showToast('Jewelry piece updated successfully!');
+        }
+      } else {
+        // Add new piece
+        jewelryPieces.push(piece);
+        showToast('Jewelry piece added successfully!');
+      }
+      
+      renderInventory();
+      jewelryForm.reset();
+      currentPieceId = null;
+      document.querySelector('[data-tab="list"]').click();
+    }
+    
+    // Render inventory to the table
+    function renderInventory() {
+      const searchTerm = searchInput.value.toLowerCase();
+      
+      const filteredPieces = jewelryPieces.filter(piece => {
+        const name = piece.name.toLowerCase();
+        const type = piece.type.toLowerCase();
+        const materials = piece.materials.toLowerCase();
+        
+        return (
+          name.includes(searchTerm) ||
+          type.includes(searchTerm) ||
+          materials.includes(searchTerm)
+        );
+      });
+      
+      inventoryList.innerHTML = '';
+      
+      if (filteredPieces.length === 0) {
+        inventoryList.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center;">No jewelry pieces found</td>
+          </tr>
+        `;
+        return;
+      }
+      
+      filteredPieces.forEach(piece => {
+        const row = document.createElement('tr');
+        
+        // Determine status badge class
+        const statusClass = piece.status === 'Sold' ? 'status-sold' : 'status-available';
+        
+        row.innerHTML = `
+          <td data-label="Piece Name">${piece.name}</td>
+          <td data-label="Type">${piece.type}</td>
+          <td data-label="Materials">${piece.materials}</td>
+          <td data-label="Price">$${piece.price.toFixed(2)}</td>
+          <td data-label="Status">
+            <span class="status-badge ${statusClass}">${piece.status}</span>
+          </td>
+          <td data-label="Actions">
+            <div class="action-btns">
+              <button class="btn btn-edit" data-id="${piece.id}">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              ${piece.status === 'Available' ? 
+                `<button class="btn btn-sold" data-id="${piece.id}">
+                  <i class="fas fa-check"></i> Mark Sold
+                </button>` : ''}
+              <button class="btn btn-delete" data-id="${piece.id}">
+                <i class="fas fa-trash"></i> Delete
+              </button>
+            </div>
+          </td>
+        `;
+        inventoryList.appendChild(row);
+      });
+      
+      // Add event listeners to action buttons
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', () => editPiece(parseInt(btn.getAttribute('data-id'))));
+      });
+      
+      document.querySelectorAll('.btn-sold').forEach(btn => {
+        btn.addEventListener('click', () => markAsSold(parseInt(btn.getAttribute('data-id'))));
+      });
+      
+      document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => deletePiece(parseInt(btn.getAttribute('data-id'))));
+      });
+    }
+    
+    // Edit jewelry piece
+    function editPiece(id) {
+      const piece = jewelryPieces.find(p => p.id === id);
+      if (!piece) return;
+      
+      currentPieceId = id;
+      document.getElementById('piece-name').value = piece.name;
+      document.getElementById('piece-type').value = piece.type;
+      document.getElementById('materials').value = piece.materials;
+      document.getElementById('price').value = piece.price;
+      document.getElementById('creation-date').value = piece.creationDate;
+      document.getElementById('status').value = piece.status;
+      document.getElementById('description').value = piece.description;
+      document.getElementById('notes').value = piece.notes;
+      
+      document.querySelector('[data-tab="form"]').click();
+    }
+    
+    // Mark piece as sold
+    function markAsSold(id) {
+      const piece = jewelryPieces.find(p => p.id === id);
+      if (piece) {
+        piece.status = 'Sold';
+        renderInventory();
+        showToast('Piece marked as sold!');
+      }
+    }
+    
+    // Delete jewelry piece
+    function deletePiece(id) {
+      if (confirm('Are you sure you want to delete this jewelry piece?')) {
+        jewelryPieces = jewelryPieces.filter(p => p.id !== id);
+        renderInventory();
+        showToast('Jewelry piece deleted successfully!');
+      }
+    }
+    
+    // Show toast notification
+    function showToast(message, isError = false) {
+      toastMessage.textContent = message;
+      toast.classList.remove('error');
+      
+      if (isError) {
+        toast.classList.add('error');
+      }
+      
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
