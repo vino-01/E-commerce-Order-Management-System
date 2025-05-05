@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewelry Purchase Form</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
+            width: 400px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+        .submit-btn {
+            background: #007bff;
+        }
+        .reset-btn {
+            background: #ff4757;
+        }
+        .submit-btn:hover {
+            background: #0056b3;
+        }
+        .reset-btn:hover {
+            background: #c82333;
+        }
+        .gender-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+    <script>
+        function validateForm() {
+            let valid = true;
+            let name = document.getElementById("customerName").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+            let reviewCheckbox = document.getElementById("review");
+            let deliveryDate = document.getElementById("deliveryDate").value;
+            
+            let today = new Date();
+            today.setHours(0, 0, 0, 0); 
+            let selectedDate = new Date(deliveryDate);
+            
+            document.getElementById("nameError").textContent = "";
+            document.getElementById("emailError").textContent = "";
+            document.getElementById("phoneError").textContent = "";
+            document.getElementById("reviewError").textContent = "";
+            document.getElementById("dateError").textContent = "";
+
+            if (!/^[a-zA-Z ]+$/.test(name)) {
+                document.getElementById("nameError").textContent = "Please enter a valid name.";
+                valid = false;
+            }
+            if (/^[^a-zA-Z0-9]+$/.test(email) || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+                document.getElementById("emailError").textContent = "Please enter a valid email.";
+                valid = false;
+            }
+            if (!/^[0-9]{10}$/.test(phone)) {
+                document.getElementById("phoneError").textContent = "Please enter a valid phone number.";
+                valid = false;
+            }
+            if (!reviewCheckbox.checked) {
+                document.getElementById("reviewError").textContent = "You must review and accept the terms.";
+                valid = false;
+            }
+            if (deliveryDate === "" || selectedDate < today) {
+                document.getElementById("dateError").textContent = "Please enter a valid delivery date (today or later).";
+                valid = false;
+            }
+
+            return valid;
+        }
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Jewelry Purchase Form</h2>
+        <form onsubmit="return validateForm()">
+            <div class="form-group">
+                <label>Customer Name:</label>
+                <input type="text" id="customerName" placeholder="Enter your name">
+                <span id="nameError" class="error"></span>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="email" placeholder="Enter your email">
+                <span id="emailError" class="error"></span>
+            </div>
+            <div class="form-group">
+                <label>Phone Number:</label>
+                <input type="text" id="phone" placeholder="Enter phone number">
+                <span id="phoneError" class="error"></span>
+            </div>
+            <div class="form-group">
+                <label>Gender:</label>
+                <div class="gender-container">
+                    <input type="radio" name="gender" value="Male"> Male
+                    <input type="radio" name="gender" value="Female"> Female
+                    <input type="radio" name="gender" value="Other"> Other
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Address:</label>
+                <input type="text" id="address" placeholder="Enter your address">
+            </div>
+            <div class="form-group">
+                <label>Jewelry Type:</label>
+                <input type="text" id="jewelryType" placeholder="Enter jewelry type">
+            </div>
+            <div class="form-group">
+                <label>Price:</label>
+                <input type="text" id="price" placeholder="Enter price">
+            </div>
+            <div class="form-group">
+                <label>Payment Method:</label>
+                <select id="paymentMethod">
+                    <option value="">Select</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cash">Cash</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Delivery Date:</label>
+                <input type="date" id="deliveryDate">
+                <span id="dateError" class="error"></span>
+            </div>
+            <div class="form-group">
+                <label>Comments:</label>
+                <textarea id="notes" placeholder="Any special requests?"></textarea>
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="review"> I have reviewed my details and accept the terms
+                <span id="reviewError" class="error"></span>
+            </div>
+            <div class="btn-container">
+                <button type="submit" class="submit-btn">Submit</button>
+                <button type="reset" class="reset-btn">Reset</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
